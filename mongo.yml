@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+  labels:
+    app: mongo
+# Specification of the desired state of the deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  # Configuration of the pods that will be created by this deployment
+  template:
+    metadata:
+      ## If we have 3 pods these are going to be something like --> mongo-0, mongo-1, mongo-2
+      labels:
+        app: mongo
+    spec:
+      containers:
+      # We defined one container in the pod
+      # We can define more than one container in a pod but mostly --> one main application per pod
+      - name: mongodb
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-user
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-password
+        resources:
+                limits:
+                  cpu: "1"
+                  memory: "1Gi"
+                requests:
+                  cpu: "0.5"
+                  memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+spec:
+  selector:
+    app: mongo
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017 

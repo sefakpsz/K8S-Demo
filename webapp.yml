@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  labels:
+    app: webapp
+# Specification of the desired state of the deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp
+  # Configuration of the pods that will be created by this deployment
+  template:
+    metadata:
+      ## If we have 3 pods these are going to be something like --> webapp-0, webapp-1, webapp-2
+      labels:
+        app: webapp
+    spec:
+      containers:
+      # We defined one container in the pod
+      # We can define more than one container in a pod but mostly --> one main application per pod
+      - name: mongodb
+        image: nanajanashia/k8s-demo-app:v1.0
+        ports:
+        - containerPort: 3000
+
+        env:
+        - name: USER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-user
+        - name: USER_PWD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-password
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: mongo-config
+              key: mongo-url
+
+        resources:
+                limits:
+                  cpu: "1"
+                  memory: "1Gi"
+                requests:
+                  cpu: "0.5"
+                  memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+spec:
+  type: NodePort
+  selector:
+    app: webapp
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30000
