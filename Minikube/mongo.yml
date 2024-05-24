@@ -1,47 +1,42 @@
+# Deployment Configurations
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webapp-deployment
+  name: mongo-deployment
   labels:
-    app: webapp
+    app: mongo
 # Specification of the desired state of the deployment
 spec:
   replicas: 1
   selector:
+    # It helps to kubernates to understand which pods are belongs to which deployment
     matchLabels:
-      app: webapp
+      app: mongo
   # Configuration of the pods that will be created by this deployment
   template:
     metadata:
-      ## If we have 3 pods these are going to be something like --> webapp-0, webapp-1, webapp-2
+      ## If we have 3 pods these are going to be something like --> mongo-0, mongo-1, mongo-2
       labels:
-        app: webapp
+        app: mongo
     spec:
       containers:
       # We defined one container in the pod
       # We can define more than one container in a pod but mostly --> one main application per pod
       - name: mongodb
-        image: nanajanashia/k8s-demo-app:v1.0
+        image: mongo:latest
         ports:
-        - containerPort: 3000
-
+        - containerPort: 27017
         env:
-        - name: USER_NAME
+        - name: MONGO_INITDB_ROOT_USERNAME
           valueFrom:
             secretKeyRef:
               name: mongo-secret
               key: mongo-user
-        - name: USER_PWD
+        - name: MONGO_INITDB_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mongo-secret
               key: mongo-password
-        - name: DB_URL
-          valueFrom:
-            configMapKeyRef:
-              name: mongo-config
-              key: mongo-url
-
         resources:
                 limits:
                   cpu: "1"
@@ -49,17 +44,21 @@ spec:
                 requests:
                   cpu: "0.5"
                   memory: "512Mi"
+
 ---
+
+# Service Configurations
 apiVersion: v1
 kind: Service
 metadata:
-  name: webapp-service
+  name: mongo-service
 spec:
-  type: NodePort
+  # With the help of the selector field, the service can know which pods are belongs to this service
   selector:
-    app: webapp
+    app: mongo
   ports:
     - protocol: TCP
-      port: 3000
-      targetPort: 3000
-      nodePort: 30000
+      # It can be any port number but we stick the same port number in here anyway
+      port: 27017
+      # It needs to follow the containerPort of the pod
+      targetPort: 27017 

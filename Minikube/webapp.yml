@@ -1,40 +1,49 @@
+# Deployment Configurations
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo-deployment
+  name: webapp-deployment
   labels:
-    app: mongo
+    app: webapp
 # Specification of the desired state of the deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongo
+      app: webapp
   # Configuration of the pods that will be created by this deployment
   template:
     metadata:
-      ## If we have 3 pods these are going to be something like --> mongo-0, mongo-1, mongo-2
+      ## If we have 3 pods these are going to be something like --> webapp-0, webapp-1, webapp-2
       labels:
-        app: mongo
+        app: webapp
     spec:
       containers:
       # We defined one container in the pod
       # We can define more than one container in a pod but mostly --> one main application per pod
-      - name: mongodb
-        image: mongo:latest
+      - name: webapp
+        image: nanajanashia/k8s-demo-app:v1.0
         ports:
-        - containerPort: 27017
+        - containerPort: 3000
+
         env:
-        - name: MONGO_INITDB_ROOT_USERNAME
+        # Names are configured specifically for the application which Nana did.
+        - name: USER_NAME
           valueFrom:
             secretKeyRef:
               name: mongo-secret
               key: mongo-user
-        - name: MONGO_INITDB_ROOT_PASSWORD
+        - name: USER_PWD
           valueFrom:
             secretKeyRef:
               name: mongo-secret
               key: mongo-password
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: mongo-config
+              key: mongo-url
+
         resources:
                 limits:
                   cpu: "1"
@@ -42,15 +51,20 @@ spec:
                 requests:
                   cpu: "0.5"
                   memory: "512Mi"
+
 ---
+
+# Service Configurations
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo-service
+  name: webapp-service
 spec:
+  type: NodePort # Default --> ClusterIP
   selector:
-    app: mongo
+    app: webapp
   ports:
     - protocol: TCP
-      port: 27017
-      targetPort: 27017 
+      port: 3000
+      targetPort: 3000
+      nodePort: 30000 # Range --> 30000-32767

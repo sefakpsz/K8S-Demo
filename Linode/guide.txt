@@ -1,0 +1,13 @@
+Apply kubeconfig.yml file to connect your linode cluster --> export KUBECONFIG=kubeconfig.yml
+Check are they there ? --> "kubectl get nodes" || "kubectl cluster-info"
+
+Run simply a service on this cluster --> kubectl run mrdoorless --image=nanajanashia/k8s-demo-app:v1.0 --port=80
+
+Apply your own deployment file -->  kubectl apply -f mrdoorless-deployment.yml
+
+Editing files that running on kubernates --> kubectl edit deployment/service deployment-name.yml
+Exiting from file ":wq"
+To editing press "i"
+Stop editing press "esc"
+
+until we deployed our pods but it can't be accessible that's "service" comes in play and it is going to be our loadbalancer

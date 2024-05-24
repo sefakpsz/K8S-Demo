@@ -3,3 +3,17 @@ https://www.youtube.com/watch?v=s_o8dwzRlu4 --> TechWorld with Nana
 https://academy.networkchuck.com/products/kubernetes-beginners-course/categories/2154531151/posts/2171158022 --> NetworkChuckAcademy
 
 https://www.youtube.com/watch?v=7bA0gTroJjw&t=502s --> NetworkChuck
+
+
+Commands -->
+
+kubectl get all --> gives all component created in the cluster
+kubectl get configmap
+kubectl get secret
+kubectl get pod
+kubectl get --help
+kubectl describe component-name your-component-name --> gives more detailed output 
+    example --> kubectl describe service webapp-service
+    example --> kubectl describe pod webapp-deployment-5f8b5b7bd7-mhp77
+kubectl get node -o wide --> we can access the ip address of the system
+-o wide --> can be used with any "kubectl get" command to getting detailed output

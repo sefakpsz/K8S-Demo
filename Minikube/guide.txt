@@ -1,0 +1,9 @@
+brew udpate
+
+brew install minikube
+
+minikube start --driver=docker
+
+check them --> "kubectl get nodes" and "minikube status"
+
+To accessing minikube service --> minikube service name_of_service
