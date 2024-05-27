@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer-demo
+spec:
+  selector:
+    app: nginx
+    
+  # This is saying that if a client hasn't made a request for 100 seconds
+  # don't worry about which back end it was forwarded to in the past
+  # but if it is making request within that hundred seconds make sure the
+  # that session is forwarded to the same back end. 
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 100
+
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer

@@ -11,3 +11,5 @@ To editing press "i"
 Stop editing press "esc"
 
 until we deployed our pods but it can't be accessible that's "service" comes in play and it is going to be our loadbalancer
+
+If we use "-w" flag end of the "kubectl get pods -w" this make the terminal open and can be seen the changes

@@ -4,6 +4,7 @@ https://academy.networkchuck.com/products/kubernetes-beginners-course/categories
 
 https://www.youtube.com/watch?v=7bA0gTroJjw&t=502s --> NetworkChuck
 
+https://www.linode.com/docs/products/compute/kubernetes/guides/load-balancing/ --> Linode
 
 Commands -->
 

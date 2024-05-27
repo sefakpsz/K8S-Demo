@@ -1,0 +1,2 @@
+Without service we can access our services --> 
+kubectl port-forward deployment/nginx-deployment 8080:80
